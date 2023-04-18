@@ -1,0 +1,38 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "UEMUD",
+	"Description": "Plugin to develop Client for On-Chain games built with the MUD framework. Mud.dev",
+	"Category": "Other",
+	"CreatedBy": "Alireza",
+	"CreatedByURL": "https://github.com/a-najafi",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "UEMUD",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "ContextFramework",
+			"Enabled": true
+		},
+		{
+			"Name": "web3Unreal",
+			"Enabled": true
+		},
+		{
+			"Name": "TurboLink",
+			"Enabled": true
+		}
+	]
+}
