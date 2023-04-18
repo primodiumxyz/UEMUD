@@ -23,6 +23,9 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly)
 	TArray<FString> Arguments;
+
+	UPROPERTY(BlueprintReadOnly)
+	FString EncodedArguments;
 	
 
 	UPROPERTY(BlueprintReadOnly)

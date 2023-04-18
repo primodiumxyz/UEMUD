@@ -4,6 +4,7 @@
 #include "Components/BaseComponents/UInt32/CED_UEM_UInt32.h"
 
 #include "Components/BaseComponents/UInt32/C_UEM_UInt32.h"
+#include "Encoding/FL_UEM_Encode.h"
 #include "Hex/FL_UEM_HexConversions.h"
 #include "Misc/DefaultValueHelper.h"
 
@@ -18,10 +19,8 @@ FInstancedStruct UCED_UEM_UInt32::GetInitializedComponentInstancedStruct()
 
 FInstancedStruct UCED_UEM_UInt32::GetComponentFromEncodedData(const TArray<uint8>& EncodedValues)
 {
-	const int32 Value = UFL_UEM_HexConversions::GetNumberFromBytes(EncodedValues);
 	FInstancedStruct UInt32ComponentInstancedStruct = GetInitializedComponentInstancedStruct();
 	FC_UEM_UInt32& UInt32Component = UInt32ComponentInstancedStruct.GetMutable<FC_UEM_UInt32>();
-	UInt32Component.Value = Value;
-	
+	UInt32Component.Value = UFL_UEM_Encode::DecodeNumber(EncodedValues);
 	return UInt32ComponentInstancedStruct;
 }

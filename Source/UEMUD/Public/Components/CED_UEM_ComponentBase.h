@@ -20,7 +20,10 @@ protected:
 	UFUNCTION()
 	virtual FInstancedStruct GetInitializedComponentInstancedStruct();
 
+	
+
 public:
+
 
 	
 	UFUNCTION()

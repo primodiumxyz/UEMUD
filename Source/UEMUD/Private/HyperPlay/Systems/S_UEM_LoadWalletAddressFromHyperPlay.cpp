@@ -45,7 +45,13 @@ void US_UEM_LoadWalletAddressFromHyperPlay::OnGetAccountsResponse(FM_UEM_GetAcco
 	if(GetBalanceResponse.bSuccess && GetBalanceResponse.AccountAddress != "")
 	{
 		const FC_UEM_WalletAddress Wallet =FC_UEM_WalletAddress(GetBalanceResponse.AccountAddress);
-		UCF_GroupsStatics::SetSingletonComponent<FC_UEM_WalletAddress>(this,Wallet);
+		if(UCF_GroupsStatics::DoesSingletonComponentExist<FC_UEM_WalletAddress>(this))
+				UCF_GroupsStatics::SetSingletonComponent<FC_UEM_WalletAddress>(this,Wallet);
+		else
+		{
+			const FCF_Context WalletAddressContext = UCF_Statics::CreateNewContext(this);
+			UCF_Statics::SetComponentOfContextId<FC_UEM_WalletAddress>(this,WalletAddressContext.ContextId,Wallet);
+		}
 	}
 	
 	

@@ -53,7 +53,7 @@ void UMS_UEM_Base::ExecuteSystemCall(FString ContractAddress,const FString& Cont
 	ExecuteSystemCallInstance.ContractAddress = ContractAddress;
 	ExecuteSystemCallInstance.FunctionName = FunctionName;
 	ExecuteSystemCallInstance.Arguments = TArray<FString>(Arguments);
-	
+	ExecuteSystemCallInstance.EncodedArguments = EncodedArguments;
 
 	int32 OnGetAccountsDelegateHandleIndex = GetAccountsDelegateHandlesFreeIndex();
 	if(OnGetAccountsDelegateHandleIndex < 0)

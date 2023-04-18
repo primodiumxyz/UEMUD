@@ -11,7 +11,10 @@ FInstancedStruct UCED_UEM_ComponentBase::GetInitializedComponentInstancedStruct(
 }
 
 
+
+
 FInstancedStruct UCED_UEM_ComponentBase::GetComponentFromEncodedData(const TArray<uint8>& EncodedValues)
 {
+	
 	throw;
 }
