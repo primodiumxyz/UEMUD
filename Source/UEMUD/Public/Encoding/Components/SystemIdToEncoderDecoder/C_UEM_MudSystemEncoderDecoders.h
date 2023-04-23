@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Core/Component/CF_Component.h"
-#include "Systems/SED_UEM_Base.h"
+#include "Contract/Systems/SED_UEM_Base.h"
 #include "UObject/Object.h"
 #include "C_UEM_MudSystemEncoderDecoders.generated.h"
 

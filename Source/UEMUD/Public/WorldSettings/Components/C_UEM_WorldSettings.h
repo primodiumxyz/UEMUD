@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Core/Component/CF_Component.h"
 #include "UObject/Object.h"
-#include "UEMUD/Public/Components/DA_UEM_ComponentMappings.h"
+#include "UEMUD/Public/Contract/Components/DA_UEM_ComponentMappings.h"
 #include "C_UEM_WorldSettings.generated.h"
 
 /**

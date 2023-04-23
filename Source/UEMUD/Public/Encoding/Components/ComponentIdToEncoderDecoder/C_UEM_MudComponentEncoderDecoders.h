@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Core/Component/CF_Component.h"
 #include "UObject/Object.h"
-#include "Components/CED_UEM_ComponentBase.h"
+#include "Contract/Components/CED_UEM_ComponentBase.h"
 #include "C_UEM_MudComponentEncoderDecoders.generated.h"
 
 /**

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
-#include "UEMUD/Public/Components/DA_UEM_ComponentMappings.h"
+#include "UEMUD/Public/Contract/Components/DA_UEM_ComponentMappings.h"
 #include "S_UEM_LoadWorldSettings.generated.h"
 
 /**

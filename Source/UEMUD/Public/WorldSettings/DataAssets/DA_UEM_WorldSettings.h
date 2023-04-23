@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/DA_UEM_ComponentMappings.h"
+#include "Contract/Components/DA_UEM_ComponentMappings.h"
 #include "UObject/Object.h"
 #include "DA_UEM_WorldSettings.generated.h"
 

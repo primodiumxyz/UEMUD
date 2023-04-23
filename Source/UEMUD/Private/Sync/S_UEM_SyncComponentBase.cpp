@@ -3,7 +3,7 @@
 
 #include "Sync/S_UEM_SyncComponentBase.h"
 
-#include "Components/CED_UEM_ComponentBase.h"
+#include "Contract/Components/CED_UEM_ComponentBase.h"
 #include "Core/StaticFunctionLibrary/CF_Statics.h"
 #include "Encoding/Components/ComponentIdToEncoderDecoder/C_UEM_MudComponentEncoderDecoders.h"
 #include "Encoding/Components/SystemIdToEncoderDecoder/C_UEM_MudSystemEncoderDecoders.h"
