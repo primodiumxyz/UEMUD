@@ -112,7 +112,7 @@ void US_UEM_FaucetServiceHandler::OnFaucetServiceRequestDripDev(
 	FM_UEM_FaucetServiceRequestDripDev FM_UEM_FaucetServiceRequestDripDev)
 {
 	
-	if(FM_UEM_FaucetServiceRequestDripDev.WalletAddress.Equals("0x"))
+	if(FM_UEM_FaucetServiceRequestDripDev.WalletAddress.Equals("0x") && UCF_GroupsStatics::DoesSingletonComponentExist<FC_UEM_WalletAddress>(this))
 	{
 		const FC_UEM_WalletAddress wallet = UCF_GroupsStatics::GetSingletonComponent<FC_UEM_WalletAddress>(this);
 		FM_UEM_FaucetServiceRequestDripDev.WalletAddress = wallet.EthWalletAddress;

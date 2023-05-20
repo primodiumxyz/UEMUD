@@ -17,14 +17,17 @@ struct UEMUD_API FC_UEM_WorldSettings : public FCF_Component
 	GENERATED_BODY()
 public:
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FString Namespace;
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FString WorldContractAddress;
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FString JsonRPCUrl;
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FString ChainId;
 	
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	UDA_UEM_ComponentMappings* ComponentMappings;
 	
 	
@@ -32,17 +35,21 @@ public:
 
 	FC_UEM_WorldSettings()
 	{
+		Namespace = "";
 		WorldContractAddress = "0x";
 		JsonRPCUrl = "";
 		ChainId = "";
 		ComponentMappings = nullptr;
 	}
 
-	FC_UEM_WorldSettings(FString _WorldContractAddress,
+
+	FC_UEM_WorldSettings(FString _Namespace,
+		FString _WorldContractAddress,
 		FString _JsonRPCUrl,
 		FString _ChainId,
 		UDA_UEM_ComponentMappings* _ComponentMappings)
 	{
+		Namespace = _Namespace;
 		WorldContractAddress = _WorldContractAddress;
 		JsonRPCUrl = _JsonRPCUrl;
 		ChainId = _ChainId;

@@ -20,6 +20,7 @@ void US_UEM_LoadWorldSettings::Initialize(FSubsystemCollectionBase& Collection)
 
 	const FCF_Context WorldSettingsContext = UCF_Statics::CreateNewContext(this);
 	const FC_UEM_WorldSettings WorldSettingsComponent = FC_UEM_WorldSettings(
+		WorldSettings->Namespace,
 		WorldSettings->WorldContractAddress,
 		WorldSettings->JsonRPCUrl,
 		WorldSettings->ChainId,

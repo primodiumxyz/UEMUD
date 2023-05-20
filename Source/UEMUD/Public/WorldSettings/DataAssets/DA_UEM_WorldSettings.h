@@ -21,6 +21,10 @@ class UEMUD_API UDA_UEM_WorldSettings : public UDeveloperSettings
 public:
 	GENERATED_BODY()
 
+
+	UPROPERTY(Config,EditDefaultsOnly,BlueprintReadOnly)
+	FString Namespace;
+	
 	UPROPERTY(Config,EditDefaultsOnly,BlueprintReadOnly)
 	FString WorldContractAddress;
 
