@@ -22,6 +22,10 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FString WorldContractAddress;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FString WorldContractAbi;
+	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FString JsonRPCUrl;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
@@ -37,6 +41,7 @@ public:
 	{
 		Namespace = "";
 		WorldContractAddress = "0x";
+		WorldContractAbi = "";
 		JsonRPCUrl = "";
 		ChainId = "";
 		ComponentMappings = nullptr;
@@ -45,12 +50,14 @@ public:
 
 	FC_UEM_WorldSettings(FString _Namespace,
 		FString _WorldContractAddress,
+		FString _WorldContractAbi,
 		FString _JsonRPCUrl,
 		FString _ChainId,
 		UDA_UEM_ComponentMappings* _ComponentMappings)
 	{
 		Namespace = _Namespace;
 		WorldContractAddress = _WorldContractAddress;
+		WorldContractAbi = _WorldContractAbi;
 		JsonRPCUrl = _JsonRPCUrl;
 		ChainId = _ChainId;
 		ComponentMappings = _ComponentMappings;

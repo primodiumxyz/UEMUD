@@ -6,7 +6,6 @@
 #include "Contract/Components/CED_UEM_ComponentBase.h"
 #include "Core/StaticFunctionLibrary/CF_Statics.h"
 #include "Encoding/Components/ComponentIdToEncoderDecoder/C_UEM_MudComponentEncoderDecoders.h"
-#include "Encoding/Components/SystemIdToEncoderDecoder/C_UEM_MudSystemEncoderDecoders.h"
 #include "Group/StaticFuntionLibrary/CF_GroupsStatics.h"
 #include "Sync/Components/MudEntityIdMapping/C_UEM_MudEntityIdMapping.h"
 #include "WorldSettings/Components/C_UEM_WorldSettings.h"
@@ -34,15 +33,10 @@ void US_UEM_SyncComponentBase::SynComponent(int32 ContextId, FString ComponentId
 	const TArray<TSubclassOf<UCED_UEM_ComponentBase>> ComponentMappings = worldSettings.ComponentMappings->MappedComponents;
 
 	FC_UEM_MudComponentEncoderDecoders MudComponentEncoderDecoders = UCF_GroupsStatics::GetSingletonComponent<FC_UEM_MudComponentEncoderDecoders>(this);
-	FC_UEM_MudSystemEncoderDecoders MudSystemEncoderDecoders = UCF_GroupsStatics::GetSingletonComponent<FC_UEM_MudSystemEncoderDecoders>(this);
+	
 	
 	if(!MudComponentEncoderDecoders.ComponentIdToEncoderDecoder.Contains(ComponentId))
 	{
-		if( MudSystemEncoderDecoders.SystemIdToEncoderDecoder.Contains(ComponentId))
-		{
-			UE_LOG(LogTemp, Log, TEXT("Mud System Stream: %s" ), *MudSystemEncoderDecoders.SystemIdToEncoderDecoder[ComponentId]->Id);
-			return;
-		}
 		UE_LOG(LogTemp, Error, TEXT("Mud Component not setup: %s" ), *ComponentId);
 		return;
 	}

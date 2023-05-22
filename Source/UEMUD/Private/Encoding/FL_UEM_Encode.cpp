@@ -3,6 +3,7 @@
 
 #include "Encoding/FL_UEM_Encode.h"
 
+#include "Web3Utils.h"
 #include "Hex/FL_UEM_HexConversions.h"
 
 FString UFL_UEM_Encode::EncodeNumber(int32 number, bool bPrefix)
@@ -15,6 +16,11 @@ FString UFL_UEM_Encode::EncodeNumber(int32 number, bool bPrefix)
 FString UFL_UEM_Encode::EncodeBool(bool bBool, bool bPrefix)
 {
 	return bBool ? EncodeNumber(1,bPrefix) : EncodeNumber(0,bPrefix);
+}
+
+FString UFL_UEM_Encode::EncodeBytes(TArray<uint8> Bytes)
+{
+	return UWeb3Utils::hexStr(Bytes.GetData(),Bytes.Num()).c_str();
 }
 
 int32 UFL_UEM_Encode::DecodeNumber(const TArray<uint8>& EncodedValues, int32 StartIndex)

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "CED_UEM_ComponentBase.h"
-#include "Contract/Systems/SED_UEM_Base.h"
 #include "UObject/Object.h"
 #include "DA_UEM_ComponentMappings.generated.h"
 
@@ -19,8 +18,6 @@ class UEMUD_API UDA_UEM_ComponentMappings : public UDataAsset
 public:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	TArray<TSubclassOf<UCED_UEM_ComponentBase>> MappedComponents;
-
-	UPROPERTY(EditAnywhere,BlueprintReadOnly)
-	TArray<TSubclassOf<USED_UEM_Base>> MappedSystems;
+	
 	
 };

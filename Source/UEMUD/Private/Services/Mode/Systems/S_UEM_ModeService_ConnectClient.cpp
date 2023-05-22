@@ -99,27 +99,7 @@ void US_UEM_ModeService_ConnectClient::OnModeServiceStateChanged(FM_UEM_OnModeSe
 		FGrpcModeStateRequest ModeStateRequest;
 		ModeStateRequest.Namespace.ChainId = WorldSettings.ChainId;
 		ModeStateRequest.Namespace.WorldAddress =WorldSettings.WorldContractAddress;
-		//ModeStateRequest.WorldTables = TArray<FString>();
 		
-		TArray<uint8> positionBytes = TArray<uint8>();
-		positionBytes.SetNum(16);
-		int32 count = StringToBytes("CounterTable",positionBytes.GetData(),16);
-
-		for (int i = 0; i < 16; ++i)
-		{
-			positionBytes.Insert(0,0); 
-		}
-		FString positionEncoded = UWeb3Utils::ByteArrayToFString(positionBytes);
-		positionEncoded = "0x"+ positionEncoded;
-		//ModeStateRequest.WorldTables.SetNum(1);
-		//ModeStateRequest.WorldTables[0] = "0x00000000000000000000000000000000636f756e746572000000000000000000";
-		//ModeStateRequest.WorldTables[0] = positionEncoded;
-
-		
-		//ModeStateRequest.WorldTables[0] = "0x00000000000000000000000000000000636f756e746572000000000000000000";
-		//ModeStateRequest.WorldTables[0] = "0x00000000000000000000000000000000706f736974696f6e0000000000000000";
-		//ModeStateRequest.WorldTables[1] = "0x0000000000000000000000000000000043617272696564427900000000000000";
-		//ModeStateRequest.WorldTables[2] = "0x00000000000000000000000000000000476f616c000000000000000000000000";
 		ModeServiceClient->GetState(Mode_GetStateGrpcGrpcContextHandle,ModeStateRequest);
 		
 		
@@ -132,9 +112,67 @@ void US_UEM_ModeService_ConnectClient::OnModeService_GetStateResponse(FGrpcConte
 {
 	UE_LOG(LogTemp, Log, TEXT("Mode Client Received State Response"));
 
+	
+	
+	OnModeQueryLayerStateResponse(Response,ESyncType::Set);
+	
+	const FC_UEM_ModeServiceClient ModeServiceClientComponent =  UCF_GroupsStatics::GetSingletonComponent<FC_UEM_ModeServiceClient>(this);
+	const FC_UEM_Mode_GetStreamStateGrpcContext GetStreamStateGrpcContextComponent =  UCF_GroupsStatics::GetSingletonComponent<FC_UEM_Mode_GetStreamStateGrpcContext>(this);
+	FC_UEM_WorldSettings WorldSettings = UCF_GroupsStatics::GetSingletonComponent<FC_UEM_WorldSettings>
+			(this);
+
+		
+	FGrpcModeStateRequest ModeStateRequest;
+	ModeStateRequest.Namespace.ChainId = WorldSettings.ChainId;
+	ModeStateRequest.Namespace.WorldAddress =WorldSettings.WorldContractAddress;
+	
+	ModeServiceClientComponent.QueryLayerServiceClient->StreamState(GetStreamStateGrpcContextComponent.GrpcContextHandle,ModeStateRequest);
+}
+
+void US_UEM_ModeService_ConnectClient::OnModeService_GetStreamStateResponse(FGrpcContextHandle Handle,
+                                                             const FGrpcResult& Result, const FGrpcModeQueryLayerStateStreamResponse& Response)
+{
+	if(Response.Deleted.ChainTables.Num() <= 0 &&
+		Response.Deleted.WorldTables.Num() <= 0 &&
+		Response.Inserted.WorldTables.Num() <= 0 &&
+		Response.Updated.WorldTables.Num() <= 0)
+			return;
+			
+	OnModeQueryLayerStateResponse(Response.Inserted,ESyncType::Set);
+	OnModeQueryLayerStateResponse(Response.Updated,ESyncType::Update);
+	OnModeQueryLayerStateResponse(Response.Deleted,ESyncType::Delete);
+	
+	UE_LOG(LogTemp, Log, TEXT("Mode Client Received Stream State Response"));
+	//GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Green,"ECS StateSnapshot Client Received StateSnapshot Update"  );
+	UCF_EventStatics::FireEvent_Template<FM_UEM_OnModeService_StreamStateResponse>(this,
+	FM_UEM_OnModeService_StreamStateResponse(Handle,Result,Response));
+}
+
+
+
+int32 US_UEM_ModeService_ConnectClient::GetContextIdForEntityId(FString EntityId) const
+{
+
+	FC_UEM_MudEntityIdMapping MudEntityIdMapping = UCF_GroupsStatics::GetSingletonComponent<FC_UEM_MudEntityIdMapping>(this);
+	if(!MudEntityIdMapping.MudEntityIdToLocalContextId.Contains(EntityId))
+	{
+		int32 contextId = UCF_Statics::CreateNewContext(this).ContextId;
+		MudEntityIdMapping.MudEntityIdToLocalContextId.Add(EntityId,contextId);
+		UCF_GroupsStatics::SetSingletonComponent<FC_UEM_MudEntityIdMapping>(this,MudEntityIdMapping);
+		return contextId;
+	}
+	else
+	{
+		return MudEntityIdMapping.MudEntityIdToLocalContextId[EntityId];
+	}
+}
+
+void US_UEM_ModeService_ConnectClient::OnModeQueryLayerStateResponse(
+	FGrpcModeQueryLayerStateResponse QueryLayerStateResponse, ESyncType SyncType)
+{
 	const FC_UEM_TableDefinitions TableDefinitionsComponent = UCF_GroupsStatics::GetSingletonComponent<FC_UEM_TableDefinitions>(this);
 	
-	for (auto WorldTable : Response.WorldTables)
+	for (auto WorldTable : QueryLayerStateResponse.WorldTables)
 	{
 		if(TableDefinitionsComponent.TableDefinitions.Contains(WorldTable.Key))
 		{
@@ -146,6 +184,10 @@ void US_UEM_ModeService_ConnectClient::OnModeService_GetStateResponse(FGrpcConte
 				{
 					EntityId.AppendChar(WorldTable.Value.Rows[i].Values[0].Value[charIndex]);
 				}
+				int32 ContextId = GetContextIdForEntityId(EntityId);
+				
+
+				
 				FString TableComponentJson = "{";
 				for (int j = 1; j < WorldTable.Value.Rows[i].Values.Num(); ++j)
 				{
@@ -162,7 +204,8 @@ void US_UEM_ModeService_ConnectClient::OnModeService_GetStateResponse(FGrpcConte
 						WorldTable.Value.Types[j].Equals("int16") ||
 						WorldTable.Value.Types[j].Equals("int32") ||
 						WorldTable.Value.Types[j].Equals("bool") ||
-						WorldTable.Value.Types[j].Equals("string")
+						WorldTable.Value.Types[j].Equals("string") ||
+						WorldTable.Value.Types[j].Equals("bytes32")
 						)
 					{
 						for (int charIndex = 0; charIndex < WorldTable.Value.Rows[i].Values[j].Value.Num(); ++charIndex)
@@ -170,27 +213,6 @@ void US_UEM_ModeService_ConnectClient::OnModeService_GetStateResponse(FGrpcConte
 							Value.AppendChar(WorldTable.Value.Rows[i].Values[j].Value[charIndex]);
 						}	
 					}
-					// else if(
-					// 	WorldTable.Value.Types[j].Equals("uint32[]") ||
-					// 	WorldTable.Value.Types[j].Equals("int32[]")
-					// 	)
-					// {
-					// 	Value.AppendChar('[');
-					// 	TArray<int32> NumberArray = TArray<int32>();
-					// 	int32 currValue = 0;
-					// 	for (int charIndex = 1; charIndex < WorldTable.Value.Rows[i].Values[j].Value.Num() - 1; ++charIndex)
-					// 	{
-					// 		if(charIndex % 4 == 1)
-					// 			currValue += WorldTable.Value.Rows[i].Values[j].Value[charIndex];
-					// 		else if(charIndex % 4 == 2)
-					// 			currValue += WorldTable.Value.Rows[i].Values[j].Value[charIndex] * 256;
-					// 		else if(charIndex % 4 == 2)
-					// 		Value.Append(FString::FromInt(currValue));
-					// 		if(charIndex %  2 == 0 && charIndex < WorldTable.Value.Rows[i].Values[j].Value.Num() - 1)
-					// 			Value.AppendChar(',');
-					// 	}
-					// 	Value.AppendChar(']');
-					// }
 					else if(WorldTable.Value.Types[j].Equals("bytes"))
 					{
 						Value.AppendChar('[');
@@ -226,60 +248,13 @@ void US_UEM_ModeService_ConnectClient::OnModeService_GetStateResponse(FGrpcConte
 				
 				FJsonObjectConverter::JsonObjectToUStruct(JsonObjectPtr.ToSharedRef(),TableDefinitionsComponent.TableDefinitions[WorldTable.Key],OutInstancedStruct.GetMutableMemory());
 
-				int32 ContextId = GetContextIdForEntityId(EntityId);
-				UCF_Statics::SetComponentInstancedStructOfContextId(this,ContextId,OutInstancedStruct);
+				if(SyncType == ESyncType::Delete)
+					UCF_Statics::RemoveComponentFromContextId(this,ContextId,OutInstancedStruct);
+				else 
+					UCF_Statics::SetComponentInstancedStructOfContextId(this,ContextId,OutInstancedStruct);
 			}
 			
 			
 		}
-	}
-	
-
-	
-	const FC_UEM_ModeServiceClient ModeServiceClientComponent =  UCF_GroupsStatics::GetSingletonComponent<FC_UEM_ModeServiceClient>(this);
-	const FC_UEM_Mode_GetStreamStateGrpcContext GetStreamStateGrpcContextComponent =  UCF_GroupsStatics::GetSingletonComponent<FC_UEM_Mode_GetStreamStateGrpcContext>(this);
-	FC_UEM_WorldSettings WorldSettings = UCF_GroupsStatics::GetSingletonComponent<FC_UEM_WorldSettings>
-			(this);
-
-		
-	FGrpcModeStateRequest ModeStateRequest;
-	ModeStateRequest.Namespace.ChainId = WorldSettings.ChainId;
-	ModeStateRequest.Namespace.WorldAddress =WorldSettings.WorldContractAddress;
-	
-	ModeServiceClientComponent.QueryLayerServiceClient->StreamState(GetStreamStateGrpcContextComponent.GrpcContextHandle,ModeStateRequest);
-}
-
-void US_UEM_ModeService_ConnectClient::OnModeService_GetStreamStateResponse(FGrpcContextHandle Handle,
-                                                             const FGrpcResult& Result, const FGrpcModeQueryLayerStateStreamResponse& Response)
-{
-	if(Response.Deleted.ChainTables.Num() <= 0 &&
-		Response.Deleted.WorldTables.Num() <= 0 &&
-		Response.Inserted.WorldTables.Num() <= 0 &&
-		Response.Updated.WorldTables.Num() <= 0)
-			return;
-			
-	
-	UE_LOG(LogTemp, Log, TEXT("Mode Client Received Stream State Response"));
-	//GEngine->AddOnScreenDebugMessage(-1, 60, FColor::Green,"ECS StateSnapshot Client Received StateSnapshot Update"  );
-	UCF_EventStatics::FireEvent_Template<FM_UEM_OnModeService_StreamStateResponse>(this,
-	FM_UEM_OnModeService_StreamStateResponse(Handle,Result,Response));
-}
-
-
-
-int32 US_UEM_ModeService_ConnectClient::GetContextIdForEntityId(FString EntityId) const
-{
-
-	FC_UEM_MudEntityIdMapping MudEntityIdMapping = UCF_GroupsStatics::GetSingletonComponent<FC_UEM_MudEntityIdMapping>(this);
-	if(!MudEntityIdMapping.MudEntityIdToLocalContextId.Contains(EntityId))
-	{
-		int32 contextId = UCF_Statics::CreateNewContext(this).ContextId;
-		MudEntityIdMapping.MudEntityIdToLocalContextId.Add(EntityId,contextId);
-		UCF_GroupsStatics::SetSingletonComponent<FC_UEM_MudEntityIdMapping>(this,MudEntityIdMapping);
-		return contextId;
-	}
-	else
-	{
-		return MudEntityIdMapping.MudEntityIdToLocalContextId[EntityId];
 	}
 }

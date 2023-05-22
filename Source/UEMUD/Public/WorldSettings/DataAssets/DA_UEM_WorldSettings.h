@@ -29,6 +29,9 @@ public:
 	FString WorldContractAddress;
 
 	UPROPERTY(Config,EditDefaultsOnly,BlueprintReadOnly)
+	FString WorldAbi;
+
+	UPROPERTY(Config,EditDefaultsOnly,BlueprintReadOnly)
 	FString JsonRPCUrl;
 
 	UPROPERTY(Config,EditDefaultsOnly,BlueprintReadOnly)

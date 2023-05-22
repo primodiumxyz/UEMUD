@@ -6,7 +6,13 @@
 #include "UObject/Object.h"
 #include "S_UEM_ModeService_ConnectClient.generated.h"
 
-
+UENUM()
+enum ESyncType
+{
+	Set,
+	Update,
+	Delete,
+};
 
 UCLASS()
 class UEMUD_API US_UEM_ModeService_ConnectClient : public UGameInstanceSubsystem
@@ -26,4 +32,7 @@ public:
 
 
 	 int32 GetContextIdForEntityId(FString EntityId) const;
+
+	UFUNCTION()
+	void OnModeQueryLayerStateResponse(FGrpcModeQueryLayerStateResponse QueryLayerStateResponse, ESyncType SyncType);
 };

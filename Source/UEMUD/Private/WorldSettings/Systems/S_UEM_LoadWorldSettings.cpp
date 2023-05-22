@@ -22,6 +22,7 @@ void US_UEM_LoadWorldSettings::Initialize(FSubsystemCollectionBase& Collection)
 	const FC_UEM_WorldSettings WorldSettingsComponent = FC_UEM_WorldSettings(
 		WorldSettings->Namespace,
 		WorldSettings->WorldContractAddress,
+		WorldSettings->WorldAbi,
 		WorldSettings->JsonRPCUrl,
 		WorldSettings->ChainId,
 		ComponentMappings);

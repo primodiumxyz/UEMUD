@@ -213,17 +213,19 @@ protected:
 public:
 
 	
-	
-	
-
+	UFUNCTION()
+	virtual const FString GetEncodedArguments(FInstancedStruct SystemArgumentsStruct);
 
 	UFUNCTION()
-	virtual FString GetSystemId();
+	virtual const TArray<FString> GetStringArguments(FInstancedStruct SystemArgumentsStruct);
 
 	UFUNCTION()
-	virtual FString GetHexSystemId();
+	virtual const FString GetFunctionToExecute();
 
+	UFUNCTION()
+	virtual const FString GetEncodedFunctionToExecute();
 	
+
 
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
 	

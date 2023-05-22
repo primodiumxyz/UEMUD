@@ -24,6 +24,8 @@ void US_UEM_InitializeComponentEncoderDecoders::Initialize(FSubsystemCollectionB
 	FCF_Context MudComponentEncoderDecoderContext = UCF_Statics::CreateNewContext(this);
 
 	FC_UEM_WorldSettings worldSettings = UCF_GroupsStatics::GetSingletonComponent<FC_UEM_WorldSettings>(this);
+	if(worldSettings.ComponentMappings == nullptr)
+		return;
 	const TArray<TSubclassOf<UCED_UEM_ComponentBase>> ComponentMappings = worldSettings.ComponentMappings->MappedComponents;
 
 	TMap<FString,UCED_UEM_ComponentBase*> ComponentIdToEncoderDecoder = TMap<FString,UCED_UEM_ComponentBase*>();

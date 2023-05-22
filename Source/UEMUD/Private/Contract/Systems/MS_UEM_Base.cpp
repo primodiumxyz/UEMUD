@@ -27,14 +27,28 @@
 #include "Web3Unreal/SendContract/Messages/M_UEM_SendContractResponse.h"
 #include "WorldSettings/Components/C_UEM_WorldSettings.h"
 
-FString UMS_UEM_Base::GetSystemId()
+
+const FString UMS_UEM_Base::GetEncodedArguments(FInstancedStruct SystemArgumentsStruct)
 {
 	throw;
 }
 
-FString UMS_UEM_Base::GetHexSystemId()
+const TArray<FString> UMS_UEM_Base::GetStringArguments(FInstancedStruct SystemArgumentsStruct)
 {
-	return UKeccak256Helper::Keccak256(GetSystemId());
+	throw;
+}
+
+const FString UMS_UEM_Base::GetFunctionToExecute()
+{
+	throw;
+}
+
+const FString UMS_UEM_Base::GetEncodedFunctionToExecute()
+{
+	const FString Signature = GetFunctionToExecute();
+	const FString FunctionHash = UKeccak256Helper::Keccak256(Signature);
+	FString FunctionSelector = FunctionHash.Mid(0, 8);
+	return FString("0x").Append(FunctionSelector);
 }
 
 bool UMS_UEM_Base::ShouldCreateSubsystem(UObject* Outer) const
