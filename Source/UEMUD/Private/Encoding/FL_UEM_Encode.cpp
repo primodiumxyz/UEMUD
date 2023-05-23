@@ -20,7 +20,8 @@ FString UFL_UEM_Encode::EncodeBool(bool bBool, bool bPrefix)
 
 FString UFL_UEM_Encode::EncodeBytes(TArray<uint8> Bytes)
 {
-	return UWeb3Utils::hexStr(Bytes.GetData(),Bytes.Num()).c_str();
+	const FString result = UWeb3Utils::hexStr(Bytes.GetData(),Bytes.Num()).c_str();
+	return FString::Printf(TEXT("0x%s"),*result);
 }
 
 int32 UFL_UEM_Encode::DecodeNumber(const TArray<uint8>& EncodedValues, int32 StartIndex)
