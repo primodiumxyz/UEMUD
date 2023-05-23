@@ -21,6 +21,7 @@
 #include "Services/Mode/Messages/M_UEM_OnModeService_StateChanged.h"
 #include "Services/Mode/Messages/M_UEM_OnModeService_StreamStateResponse.h"
 #include "Sync/Components/MudEntityIdMapping/C_UEM_MudEntityIdMapping.h"
+#include "Wallet/Components/Wallet/C_UEM_WalletAddress.h"
 #include "WorldSettings/Components/C_UEM_WorldSettings.h"
 
 
@@ -171,7 +172,8 @@ void US_UEM_ModeService_ConnectClient::OnModeQueryLayerStateResponse(
 	FGrpcModeQueryLayerStateResponse QueryLayerStateResponse, ESyncType SyncType)
 {
 	const FC_UEM_TableDefinitions TableDefinitionsComponent = UCF_GroupsStatics::GetSingletonComponent<FC_UEM_TableDefinitions>(this);
-	
+	FString walletAddress = UCF_GroupsStatics::GetSingletonComponent<FC_UEM_WalletAddress>(this).EthWalletAddress;
+	UE_LOG(LogTemp, Log, TEXT("Wallet Address: %s"),*walletAddress);
 	for (auto WorldTable : QueryLayerStateResponse.WorldTables)
 	{
 		if(TableDefinitionsComponent.TableDefinitions.Contains(WorldTable.Key))
@@ -204,15 +206,9 @@ void US_UEM_ModeService_ConnectClient::OnModeQueryLayerStateResponse(
 						WorldTable.Value.Types[j].Equals("int16") ||
 						WorldTable.Value.Types[j].Equals("int32") ||
 						WorldTable.Value.Types[j].Equals("bool") ||
+						WorldTable.Value.Types[j].Equals("string") ||
 						WorldTable.Value.Types[j].Equals("bytes32")
 						)
-					{
-						for (int charIndex = 0; charIndex < WorldTable.Value.Rows[i].Values[j].Value.Num(); ++charIndex)
-						{
-							Value.AppendChar(WorldTable.Value.Rows[i].Values[j].Value[charIndex]);
-						}	
-					}
-					else if(WorldTable.Value.Types[j].Equals("string"))
 					{
 						for (int charIndex = 0; charIndex < WorldTable.Value.Rows[i].Values[j].Value.Num(); ++charIndex)
 						{
