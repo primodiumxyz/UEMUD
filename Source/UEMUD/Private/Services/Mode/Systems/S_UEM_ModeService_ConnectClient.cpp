@@ -204,9 +204,15 @@ void US_UEM_ModeService_ConnectClient::OnModeQueryLayerStateResponse(
 						WorldTable.Value.Types[j].Equals("int16") ||
 						WorldTable.Value.Types[j].Equals("int32") ||
 						WorldTable.Value.Types[j].Equals("bool") ||
-						WorldTable.Value.Types[j].Equals("string") ||
 						WorldTable.Value.Types[j].Equals("bytes32")
 						)
+					{
+						for (int charIndex = 0; charIndex < WorldTable.Value.Rows[i].Values[j].Value.Num(); ++charIndex)
+						{
+							Value.AppendChar(WorldTable.Value.Rows[i].Values[j].Value[charIndex]);
+						}	
+					}
+					else if(WorldTable.Value.Types[j].Equals("string"))
 					{
 						for (int charIndex = 0; charIndex < WorldTable.Value.Rows[i].Values[j].Value.Num(); ++charIndex)
 						{
